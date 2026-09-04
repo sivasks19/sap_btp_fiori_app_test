@@ -1,0 +1,9 @@
+{
+  "destinations": [
+    {
+      "name": "onprem-sap",
+      "url": "http://localhost:4004",
+      "forwardAuthToken": false
+    }
+  ]
+}

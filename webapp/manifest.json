@@ -1,0 +1,37 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "sap.btpfioriodatatest",
+    "type": "application",
+    "title": "SAP BTP On-Prem OData Tester",
+    "applicationVersion": {
+      "version": "1.0.0"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "sap.btpfioriodatatest.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    }
+  }
+}
