@@ -10,7 +10,7 @@ sap.ui.define([
       const sServicePath = this._normalizeServicePath(oModel.getProperty("/servicePath"));
       const sResourcePath = this._normalizeResourcePath(oModel.getProperty("/resourcePath"));
 
-      if (!sServicePath) {
+      if (!sServicePath || !sServicePath.startsWith("/sap")) {
         MessageBox.error("Enter an on-prem OData service path that starts with /sap.");
         return;
       }

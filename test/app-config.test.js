@@ -19,6 +19,7 @@ test("approuter proxies SAP paths through the on-prem destination", function() {
   assert.ok(sapRoute);
   assert.equal(sapRoute.destination, "onprem-sap");
   assert.equal(sapRoute.authenticationType, "none");
+  assert.equal(sapRoute.csrfProtection, false);
   assert.equal(defaultEnv.destinations[0].name, sapRoute.destination);
 });
 
