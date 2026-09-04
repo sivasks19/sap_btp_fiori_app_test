@@ -1,21 +1,32 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
-  "sap/m/MessageBox"
-], function(Controller, MessageBox) {
+  "sap/m/MessageBox",
+  "sap/btpfioriodatatest/util/requestConfig",
+  "sap/btpfioriodatatest/util/requestPath"
+], function(Controller, MessageBox, requestConfig, requestPath) {
   "use strict";
 
   return Controller.extend("sap.btpfioriodatatest.controller.App", {
     onSendRequest: async function() {
       const oModel = this.getOwnerComponent().getModel("app");
-      const sServicePath = this._normalizeServicePath(oModel.getProperty("/servicePath"));
-      const sResourcePath = this._normalizeResourcePath(oModel.getProperty("/resourcePath"));
+      const sServicePath = requestPath.normalizeServicePath(oModel.getProperty("/servicePath"));
+      const sProxyUser = (oModel.getProperty("/proxyUser") || "").trim();
+      const sProxyPassword = oModel.getProperty("/proxyPassword") || "";
 
-      if (!sServicePath || !sServicePath.startsWith("/sap")) {
+      if (!sServicePath || !requestPath.isSapProxyPath(sServicePath)) {
         MessageBox.error("Enter an on-prem OData service path that starts with /sap.");
         return;
       }
 
-      const sRequestUrl = sResourcePath ? `${sServicePath}/${sResourcePath}` : sServicePath;
+      const sRequestUrl = requestPath.buildRequestUrl(sServicePath, oModel.getProperty("/resourcePath"));
+      let mHeaders;
+
+      try {
+        mHeaders = requestConfig.buildRequestHeaders(sProxyUser, sProxyPassword);
+      } catch (oError) {
+        MessageBox.error(oError.message);
+        return;
+      }
 
       this.getView().setBusy(true);
       oModel.setProperty("/statusText", `Requesting ${sRequestUrl}`);
@@ -24,54 +35,23 @@ sap.ui.define([
       try {
         const oResponse = await fetch(sRequestUrl, {
           method: "GET",
-          headers: {
-            Accept: "application/json, application/xml, text/xml, */*"
-          }
+          headers: mHeaders
         });
         const sResponseText = await oResponse.text();
+        const oResponseState = requestConfig.buildResponseState(oResponse, sResponseText);
 
-        oModel.setProperty("/responseText", this._formatResponseBody(sResponseText, oResponse.headers.get("content-type")));
-        oModel.setProperty("/statusText", `${oResponse.status} ${oResponse.statusText}`);
-        oModel.setProperty("/statusState", oResponse.ok ? "Success" : "Error");
+        oModel.setProperty("/responseText", oResponseState.responseText);
+        oModel.setProperty("/statusText", oResponseState.statusText);
+        oModel.setProperty("/statusState", oResponseState.statusState);
       } catch (oError) {
-        oModel.setProperty("/responseText", oError.message);
-        oModel.setProperty("/statusText", "Request failed");
-        oModel.setProperty("/statusState", "Error");
+        const oErrorState = requestConfig.buildErrorState(oError);
+
+        oModel.setProperty("/responseText", oErrorState.responseText);
+        oModel.setProperty("/statusText", oErrorState.statusText);
+        oModel.setProperty("/statusState", oErrorState.statusState);
       } finally {
         this.getView().setBusy(false);
       }
-    },
-
-    _normalizeServicePath: function(sServicePath) {
-      const sTrimmed = (sServicePath || "").trim();
-
-      if (!sTrimmed) {
-        return "";
-      }
-
-      const sPrefixed = sTrimmed.startsWith("/") ? sTrimmed : `/${sTrimmed}`;
-
-      return sPrefixed.replace(/\/+$/, "");
-    },
-
-    _normalizeResourcePath: function(sResourcePath) {
-      return (sResourcePath || "").trim().replace(/^\/+/, "").replace(/\/+$/, "");
-    },
-
-    _formatResponseBody: function(sResponseText, sContentType) {
-      if (!sResponseText) {
-        return "";
-      }
-
-      if ((sContentType || "").includes("json")) {
-        try {
-          return JSON.stringify(JSON.parse(sResponseText), null, 2);
-        } catch (oError) {
-          return sResponseText;
-        }
-      }
-
-      return sResponseText;
     }
   });
 });

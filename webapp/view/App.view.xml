@@ -2,15 +2,32 @@
   controllerName="sap.btpfioriodatatest.controller.App"
   displayBlock="true"
   xmlns="sap.m"
+  xmlns:core="sap.ui.core"
   xmlns:mvc="sap.ui.core.mvc"
 >
   <App>
     <Page title="On-Prem OData Tester">
       <content>
         <VBox class="sapUiSmallMargin" renderType="Bare">
+          <core:InvisibleText
+            id="proxyPasswordHelp"
+            text="Proxy password must match APP_BASIC_AUTH_PASSWORD."
+          />
           <MessageStrip
             text="Configure the SAP BTP destination onprem-sap with BasicAuthentication and Proxy Type OnPremise, then use this screen to test GET calls."
             showIcon="true"
+          />
+          <Label text="Proxy user" />
+          <Input
+            value="{app>/proxyUser}"
+            placeholder="Matches APP_BASIC_AUTH_USER"
+          />
+          <Label text="Proxy password" />
+          <Input
+            type="Password"
+            ariaLabelledBy="proxyPasswordHelp"
+            value="{app>/proxyPassword}"
+            placeholder="Matches APP_BASIC_AUTH_PASSWORD"
           />
           <Label text="Service path" />
           <Input

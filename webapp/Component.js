@@ -12,6 +12,8 @@ sap.ui.define([
     init: function() {
       UIComponent.prototype.init.apply(this, arguments);
       this.setModel(new JSONModel({
+        proxyUser: "",
+        proxyPassword: "",
         servicePath: "",
         resourcePath: "$metadata",
         responseText: "",
