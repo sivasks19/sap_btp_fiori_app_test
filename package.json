@@ -1,0 +1,23 @@
+{
+  "name": "sap_btp_fiori_app_test",
+  "version": "1.0.0",
+  "description": "SAP BTP CF Fiori app for testing on-prem SAP OData with basic authentication via destination",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sivasks19/sap_btp_fiori_app_test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0"
+  },
+  "dependencies": {
+    "@sap/approuter": "^23.0.0"
+  }
+}

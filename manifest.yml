@@ -1,0 +1,8 @@
+applications:
+  - name: sap-btp-fiori-odata-tester
+    path: .
+    memory: 256M
+    disk_quota: 256M
+    buildpacks:
+      - nodejs_buildpack
+    command: npm start
